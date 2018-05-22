@@ -5,14 +5,18 @@ using UnityEngine.UI;
 
 public class ManagerGraph : MonoBehaviour
 {
+    public static ManagerGraph instance = null;
+
     public SimpleObjectPool nodePool;
     public SimpleObjectPool edgePool;
-    public Toggle draggingToggle;
+    public Toggle draggingToggle;//on when dragging, off when drawing
 
     public bool drawing = false;
 
     private Edge currentEdge;
-    private Node currentNode;
+
+    private Node currentStartNode;
+    private Node currentEndNode;
 
     private List<Node> nodes = new List<Node>();
     private List<Edge> edges = new List<Edge>();
@@ -21,86 +25,143 @@ public class ManagerGraph : MonoBehaviour
     private int currentLine;
     private int currentColumn;
 
-    // Use this for initialization
-    void Start()
+    void Awake()
     {
+        //Check if instance already exists
+        if (instance == null)
 
+            //if not, set instance to this
+            instance = this;
+
+        //If instance already exists and it's not this:
+        else if (instance != this)
+
+            //Then destroy this. This enforces our singleton pattern, meaning there can only ever be one instance of a GameManager.
+            Destroy(gameObject);
     }
 
     // Update is called once per frame
     void Update()
     {
+        if(!draggingToggle.isOn&&Input.GetMouseButtonDown(0))
+        {
+            RaycastHit hit;
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            if(Physics.Raycast(ray, out hit, 20f))
+            {
+                currentStartNode = hit.collider.gameObject.GetComponent<Node>();
+                if(currentStartNode!=null)
+                {
+                    StartEdge(currentStartNode);
+                }
+
+            }
+                               
+        }
 
         if (drawing)
         {
-            if (Input.GetMouseButton(0))
+            if (Input.GetMouseButton(0)&&currentEdge!=null)
             {
                 Vector3 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
                 pos = new Vector3(pos.x, pos.y, 0f);
                 currentEdge.lineRenderer.SetPosition(1, pos);
             }
+
+            else if(Input.GetMouseButtonUp(0))
+            {
+                RaycastHit hit;
+                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                if (Physics.Raycast(ray, out hit, 20f))
+                {
+                    currentEndNode = hit.collider.gameObject.GetComponent<Node>();
+                    if (currentEndNode != null)
+                    {
+                        EndEdge(currentEndNode);
+                    }
+
+                    else{
+                        edgePool.ReturnObject(currentEdge.gameObject);
+                        currentEdge = null;
+                    }
+
+                }
+
+                else {
+                    currentStartNode = null;
+                    edgePool.ReturnObject(currentEdge.gameObject);
+                    currentEdge = null;
+                }
+            }
         }
 
+    }
+
+
+    void StartEdge(Node node)
+    {
+        drawing = true;
+
+        Debug.Log("start edge "+node.myIndex);
+
+        currentEdge = edgePool.GetObject().GetComponent<Edge>();
+        currentEdge.lineRenderer.SetPosition(0, node.transform.position);
+        currentEdge.SetStartPos(node);
+
+        node.myEdges.Add(currentEdge);
+
+        currentLine = node.myIndex;
+
+    }
+
+    void EndEdge(Node node)
+    {
+        Debug.Log("end edge"+node.myIndex);
+
+        currentColumn = node.myIndex;
+
+        if (!matrix[currentLine, currentColumn])
+        { 
+            matrix[currentLine, currentColumn] = true; 
+            matrix[currentColumn, currentLine] = true; 
+
+            currentEdge.lineRenderer.SetPosition(1, node.transform.position);
+            currentEdge.SetEndPos(node);
+
+            edges.Add(currentEdge);
+            node.myEdges.Add(currentEdge);
+        }
+
+        else
+        {
+            currentStartNode.myEdges.Remove(currentEdge);
+            edgePool.ReturnObject(currentEdge.gameObject);
+
+            Debug.Log("Edge already exists!");
+
+
+        }
+
+        drawing = false;
+
+        currentEdge = null;
+        currentStartNode = null;
+        currentEndNode = null;
     }
 
     public void AddNode()
     {
-        currentNode = nodePool.GetObject().GetComponent<Node>();
+        Node currentNode = nodePool.GetObject().GetComponent<Node>();
         nodes.Add(currentNode);
-        currentNode.InitInfo(nodes.Count - 1, this, draggingToggle);
+        currentNode.InitInfo(nodes.Count - 1);
         currentNode.transform.position = Vector3.zero;
-
-        currentNode = null;
     }
 
     public void DeleteNode(int nodeIndex)
     {
-        currentNode = nodes[nodeIndex];
+        Node currentNode = nodes[nodeIndex];
         nodes.RemoveAt(nodeIndex);
         nodePool.ReturnObject(currentNode.gameObject);
-
-        currentNode = null;
     }
-
-    public void StartEdge(int nodeIndex)
-    {
-        drawing = true;
-
-        Debug.Log("start edge"+nodeIndex);
-
-        currentEdge = edgePool.GetObject().GetComponent<Edge>();
-        currentEdge.lineRenderer.SetPosition(0, nodes[nodeIndex].transform.position);
-
-        currentLine = nodeIndex;
-
-    }
-
-    public void EndEdge(int nodeIndex)
-    {
-        Debug.Log("end edge"+nodeIndex);
-
-        currentColumn = nodeIndex;
-        if (!matrix[currentLine, currentColumn])
-        { matrix[currentLine, currentColumn] = true; matrix[currentColumn, currentLine] = true; }
-
-        else{
-            edgePool.ReturnObject(currentEdge.gameObject);
-            currentEdge = null;
-            drawing = false;
-
-            Debug.Log("Edge already exists!");
-
-            return;
-        }
-
-        currentEdge.lineRenderer.SetPosition(1, nodes[nodeIndex].transform.position);
-        edges.Add(currentEdge);
-
-        currentEdge = null;
-        drawing = false;
-
-
-    }
-
   
 }

@@ -5,23 +5,36 @@ using UnityEngine;
 public class Edge : MonoBehaviour
 {
 
-    //public Vector3 startPos;
-    //public Vector3 endPos;
-
     [HideInInspector]
     public LineRenderer lineRenderer;
+
+    private Node startNode;
+    private Node endNode;
 
     // Use this for initialization
     void OnEnable()
     {
         lineRenderer = GetComponent<LineRenderer>();
     }
-}
-    /*
-	public void SetPositions()
+
+    public void SetStartPos(Node node)
     {
-        lineRenderer.SetPosition(0, startPos);
-        lineRenderer.SetPosition(1, endPos);
+        startNode = node;
     }
-    */
+
+    public void SetEndPos(Node node)
+    {
+        endNode = node;
+    }
+
+    public void UpdatePositions()
+    {
+        lineRenderer.SetPosition(0, startNode.transform.position);
+        lineRenderer.SetPosition(1, endNode.transform.position);
+    }
+
+
+}
+  
+	
 

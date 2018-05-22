@@ -5,15 +5,14 @@ using UnityEngine.UI;
 
 public class Node : MonoBehaviour
 {
-    private ManagerGraph myManager;
-    private Toggle myDraggingToggle; //on when dragging
-
-    private int myIndex;
+    public int myIndex;
     private Color myColor;
     private string myLabel;
 
     private MeshRenderer meshRenderer;
     private Text myText;
+
+    public List<Edge> myEdges = new List<Edge>();
 
 	private void OnEnable()
     {
@@ -21,11 +20,8 @@ public class Node : MonoBehaviour
         myText = GetComponentInChildren<Text>();
     }
 
-	public void InitInfo(int index, ManagerGraph managerGraph, Toggle draggingToggle)
+    public void InitInfo(int index)
     {
-        myManager = managerGraph;
-        myDraggingToggle = draggingToggle;
-
         myIndex = index;
         myColor = Color.white;
         myLabel = myIndex.ToString();
@@ -44,32 +40,20 @@ public class Node : MonoBehaviour
         UpdateObjectWithInfo();
     }
 
-	private void OnMouseDrag()
-	{
-        if (myDraggingToggle.isOn)
+    private void OnMouseDrag()
+    {
+        if (!ManagerGraph.instance.draggingToggle.isOn) return;
+
+        Vector3 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        pos = new Vector3(pos.x, pos.y, 0f);
+        transform.position = pos;
+
+        foreach(Edge edge in myEdges)
         {
-                Vector3 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                pos = new Vector3(pos.x, pos.y, 0f);
-                transform.position = pos;
+            edge.UpdatePositions();
         }
 
-        else {
-            if (myManager.drawing) return;
-            else {
-                myManager.StartEdge(myIndex);
-            }
-        }
-	}
-
-	private void OnMouseEnter()
-	{
-        if(myDraggingToggle.isOn)
-        {
-            return;
-        }
-        else if (!myManager.drawing) return;
-
-        myManager.EndEdge(myIndex);
-	}
+       
+    }
 
 }

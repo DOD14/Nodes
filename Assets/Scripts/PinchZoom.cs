@@ -16,6 +16,8 @@ public class PinchZoom : MonoBehaviour
 
     void Update()
     {
+        if (!ManagerGraph.instance.draggingToggle.isOn)
+            return;
 
         if (Input.GetKey(KeyCode.UpArrow)||Input.GetKey(KeyCode.DownArrow))
         {
