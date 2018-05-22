@@ -52,8 +52,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 11c75770a077d4af5ae00d829898bbe6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startPos: {x: 0, y: 0, z: 0}
-  endPos: {x: 0, y: 0, z: 0}
+  lineRenderer: {fileID: 0}
 --- !u!120 &120637335337229030
 LineRenderer:
   m_ObjectHideFlags: 1
@@ -61,9 +60,9 @@ LineRenderer:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1072066600004276}
   m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
+  m_DynamicOccludee: 0
   m_MotionVectors: 0
   m_LightProbeUsage: 0
   m_ReflectionProbeUsage: 0
@@ -93,7 +92,7 @@ LineRenderer:
   - {x: 0, y: 0, z: 1}
   m_Parameters:
     serializedVersion: 2
-    widthMultiplier: 1
+    widthMultiplier: 0.1
     widthCurve:
       serializedVersion: 2
       m_Curve:

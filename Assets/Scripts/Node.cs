@@ -2,28 +2,41 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+
 public class Node : MonoBehaviour
 {
+    private ManagerGraph myManager;
+    private Toggle myDraggingToggle; //on when dragging
 
-
-    public Color myColor;
-    public string inputText;
+    private int myIndex;
+    private Color myColor;
+    private string myLabel;
 
     private MeshRenderer meshRenderer;
     private Text myText;
 
-    private bool touched = false;
-
-    private void Start()
+	private void OnEnable()
     {
         meshRenderer = GetComponent<MeshRenderer>();
         myText = GetComponentInChildren<Text>();
     }
 
-    public void UpdateObjectWithInfo()
+	public void InitInfo(int index, ManagerGraph managerGraph, Toggle draggingToggle)
     {
+        myManager = managerGraph;
+        myDraggingToggle = draggingToggle;
+
+        myIndex = index;
+        myColor = Color.white;
+        myLabel = myIndex.ToString();
+
+        UpdateObjectWithInfo();
+    }
+
+    private void UpdateObjectWithInfo()
+    {
+        myText.text = myLabel;
         meshRenderer.material.color = myColor;
-        myText.text = inputText;
     }
 
     private void OnMouseDown()
@@ -33,9 +46,30 @@ public class Node : MonoBehaviour
 
 	private void OnMouseDrag()
 	{
-        Vector3 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        pos = new Vector3(pos.x, pos.y, 0f);
-        transform.position = pos;
+        if (myDraggingToggle.isOn)
+        {
+                Vector3 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                pos = new Vector3(pos.x, pos.y, 0f);
+                transform.position = pos;
+        }
+
+        else {
+            if (myManager.drawing) return;
+            else {
+                myManager.StartEdge(myIndex);
+            }
+        }
+	}
+
+	private void OnMouseEnter()
+	{
+        if(myDraggingToggle.isOn)
+        {
+            return;
+        }
+        else if (!myManager.drawing) return;
+
+        myManager.EndEdge(myIndex);
 	}
 
 }
