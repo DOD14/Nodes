@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class Node : MonoBehaviour
 {
     public int myIndex;
-    private Color myColor;
+    public Color myColor;
     private string myLabel;
 
     private MeshRenderer meshRenderer;
@@ -38,6 +38,13 @@ public class Node : MonoBehaviour
     private void OnMouseDown()
     {
         UpdateObjectWithInfo();
+
+        if (ManagerGraph.instance.deletingToggle.isOn)
+        {
+            DeleteMeAndMyEdges();
+        }
+            
+
     }
 
     private void OnMouseDrag()
@@ -54,6 +61,16 @@ public class Node : MonoBehaviour
         }
 
        
+    }
+
+    private void DeleteMeAndMyEdges()
+    {
+        ManagerGraph.instance.DeleteNode(this);
+
+        foreach (Edge edge in myEdges)
+        {
+            ManagerGraph.instance.DeleteEdge(edge);
+        }
     }
 
 }

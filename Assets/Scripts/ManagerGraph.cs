@@ -9,7 +9,9 @@ public class ManagerGraph : MonoBehaviour
 
     public SimpleObjectPool nodePool;
     public SimpleObjectPool edgePool;
-    public Toggle draggingToggle;//on when dragging, off when drawing
+
+    public Toggle draggingToggle; //on when dragging, off when drawing
+    public Toggle deletingToggle; //on when deleting tapped nodes
 
     public bool drawing = false;
 
@@ -157,11 +159,16 @@ public class ManagerGraph : MonoBehaviour
         currentNode.transform.position = Vector3.zero;
     }
 
-    public void DeleteNode(int nodeIndex)
+    public void DeleteNode(Node node)
     {
-        Node currentNode = nodes[nodeIndex];
-        nodes.RemoveAt(nodeIndex);
-        nodePool.ReturnObject(currentNode.gameObject);
+        nodes.Remove(node);
+        nodePool.ReturnObject(node.gameObject);
+    }
+
+    public void DeleteEdge(Edge edge)
+    {
+        edges.Remove(edge);
+        edgePool.ReturnObject(edge.gameObject);
     }
   
 }
