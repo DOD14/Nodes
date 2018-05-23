@@ -2,40 +2,75 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+
 public class Node : MonoBehaviour
 {
-
-
+    public int myIndex;
     public Color myColor;
-    public string inputText;
+    private string myLabel;
 
     private MeshRenderer meshRenderer;
     private Text myText;
 
-    private bool touched = false;
+    public List<Edge> myEdges = new List<Edge>();
 
-    private void Start()
+	private void OnEnable()
     {
         meshRenderer = GetComponent<MeshRenderer>();
         myText = GetComponentInChildren<Text>();
     }
 
-    public void UpdateObjectWithInfo()
+    public void InitInfo(int index)
     {
+        myIndex = index;
+        myColor = Color.white;
+        myLabel = myIndex.ToString();
+
+        UpdateObjectWithInfo();
+    }
+
+    private void UpdateObjectWithInfo()
+    {
+        myText.text = myLabel;
         meshRenderer.material.color = myColor;
-        myText.text = inputText;
     }
 
     private void OnMouseDown()
     {
         UpdateObjectWithInfo();
+
+        if (ManagerGraph.instance.deletingToggle.isOn)
+        {
+            DeleteMeAndMyEdges();
+        }
+            
+
     }
 
-	private void OnMouseDrag()
-	{
+    private void OnMouseDrag()
+    {
+        if (!ManagerGraph.instance.draggingToggle.isOn) return;
+
         Vector3 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         pos = new Vector3(pos.x, pos.y, 0f);
         transform.position = pos;
-	}
+
+        foreach(Edge edge in myEdges)
+        {
+            edge.UpdatePositions();
+        }
+
+       
+    }
+
+    private void DeleteMeAndMyEdges()
+    {
+        ManagerGraph.instance.DeleteNode(this);
+
+        foreach (Edge edge in myEdges)
+        {
+            ManagerGraph.instance.DeleteEdge(edge);
+        }
+    }
 
 }

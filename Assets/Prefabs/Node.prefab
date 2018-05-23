@@ -57,7 +57,7 @@ GameObject:
   - component: {fileID: 33454364079946106}
   - component: {fileID: 23981084176662566}
   - component: {fileID: 114517574235416768}
-  - component: {fileID: 58923462588592032}
+  - component: {fileID: 135790463923169300}
   m_Layer: 0
   m_Name: Node
   m_TagString: Untagged
@@ -93,7 +93,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 52616a84d5d474257aa12f5c50ab73dd, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -120,21 +120,6 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1930057170940686}
   m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
---- !u!58 &58923462588592032
-CircleCollider2D:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1930057170940686}
-  m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
-  serializedVersion: 2
-  m_Radius: 0.5
 --- !u!114 &114089283301031432
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -183,8 +168,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9847ad983511148dd8bc6ce51ef89427, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  myColor: {r: 1, g: 0, b: 0, a: 1}
-  inputText: 2
+  myIndex: 0
+  myColor: {r: 0.572, g: 0.816, b: 1, a: 0}
+  myEdges: []
 --- !u!114 &114893181045814894
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -218,6 +204,18 @@ MonoBehaviour:
     m_VerticalOverflow: 0
     m_LineSpacing: 1
   m_Text: 1
+--- !u!135 &135790463923169300
+SphereCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1930057170940686}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.5
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!222 &222221053100077394
 CanvasRenderer:
   m_ObjectHideFlags: 1

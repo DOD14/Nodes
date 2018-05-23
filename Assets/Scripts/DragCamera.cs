@@ -7,11 +7,7 @@ public class DragCamera : MonoBehaviour
     public Camera camera;
     public float panSpeed = 2;
     private Vector3 dragOrigin;
-    private Vector3 oldPos;
 
-    private float zoomMin = 1f;
-    private float zoomMax = 6f;
-    private float zoomAmount = 1f;
     private float moveSmooth = 0.1f;
 
 
@@ -49,20 +45,29 @@ public class DragCamera : MonoBehaviour
     // Update
     void Update()
     {
+        if (!ManagerGraph.instance.draggingToggle.isOn)
+            return;
+        
         //// Moving of camera via click / drag
         if (Input.GetMouseButtonDown(0))
         {
             dragOrigin = new Vector3(Input.mousePosition.x, Input.mousePosition.y, 0);
             dragOrigin = camera.ScreenToWorldPoint(dragOrigin);
-        };
+
+        }
 
         if (Input.GetMouseButton(0))
         {
-            Vector3 currentPos = new Vector3(Input.mousePosition.x, Input.mousePosition.y, 0);
-            currentPos = camera.ScreenToWorldPoint(currentPos);
-            Vector3 movePos = dragOrigin - currentPos;
-            transform.position += (movePos * moveSmooth);
-        };
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+                if (!Physics.Raycast(ray, 20f))
+                {
+                    Vector3 currentPos = new Vector3(Input.mousePosition.x, Input.mousePosition.y, 0);
+                    currentPos = camera.ScreenToWorldPoint(currentPos);
+                    Vector3 movePos = dragOrigin - currentPos;
+                    transform.position += (movePos * moveSmooth);
+            }
+        }
     }
 
 }
